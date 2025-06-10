@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .success { color: green; }
+        .failure { color: red; }
+        a, button[type=submit] {
+            color: #007bff;
+            text-decoration: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        a:hover, button[type=submit]:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Puzzle Results</h1>
+    
+    <div class="section">
+        <h2>Number Puzzle</h2>
+        <p>Number: {{ number_result.number }}</p>
+        <p>Operation: {{ number_result.operation }}</p>
+        <p>Result: {{ number_result.result }}</p>
+    </div>
+
+    <div class="section">
+        <h2>Text Puzzle</h2>
+        <p>Text: {{ text_result.text }}</p>
+        <p>Binary: {{ text_result.binary }}</p>
+        <p>Vowel Count: {{ text_result.vowel_count }}</p>
+    </div>
+
+    <div class="section">
+        <h2>Treasure Hunt</h2>
+        <p class="{% if treasure_done and 'Correct' in treasure_feedback %}success{% elif treasure_done %}failure{% endif %}">{{ treasure_feedback }}</p>
+        <ul>
+            {% for g in treasure_attempts %}
+                <li>Attempt {{ forloop.counter }}: Guessed {{ g }}</li>
+            {% endfor %}
+        </ul>
+        {% if not treasure_done %}
+            <form method="post">
+                {% csrf_token %}
+                {{ form.guess.label_tag }} {{ form.guess }}
+                <button type="submit">Guess Again</button>
+                <input type="hidden" name="number" value="{{ form.number.value }}">
+                <input type="hidden" name="text" value="{{ form.text.value }}">
+            </form>
+        {% else %}
+            <form method="get">
+                <button type="submit">Play Again</button>
+            </form>
+        {% endif %}
+    </div>
+</body>
+</html>
